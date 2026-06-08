@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>강릉 런트립 마니또</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Black+Han+Sans&family=Gowun+Dodum&family=Jua&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --navy:#10162e; --coral:#ff6a5a; --orange:#ff9a52; --gold:#ffd06b;
+    --peach:#ffe3c4; --cream:#fff6ec; --teal:#2bc6c0; --sea:#0e3a52; --ink:#241a14;
+    --glass:rgba(255,246,236,0.94); --shadow:0 18px 50px -12px rgba(8,12,30,0.55);
+  }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+  html,body{margin:0;height:100%;}
+  body{
+    font-family:'Gowun Dodum',sans-serif;color:var(--cream);min-height:100dvh;
+    background:radial-gradient(120% 80% at 50% -10%, #ffd06b 0%, #ff9a52 16%, #ff6a5a 30%, #b5466b 46%, #3a2c5e 66%, var(--navy) 86%);
+    overflow-x:hidden;position:relative;display:flex;flex-direction:column;align-items:center;
+  }
+  .sun{position:fixed;top:6vh;left:50%;transform:translateX(-50%);width:160px;height:160px;border-radius:50%;
+    background:radial-gradient(circle at 50% 45%, #fff6d6, #ffd06b 45%, #ff9a52 75%, rgba(255,154,82,0) 100%);
+    filter:blur(2px);z-index:0;pointer-events:none;animation:rise 1.4s ease-out;}
+  @keyframes rise{from{transform:translate(-50%,60px);opacity:0;}to{transform:translate(-50%,0);opacity:1;}}
+  .sea{position:fixed;left:0;right:0;bottom:0;height:34vh;z-index:0;pointer-events:none;
+    background:linear-gradient(180deg, rgba(14,58,82,0) 0%, var(--sea) 38%, #07212f 100%);}
+  .wave{position:fixed;left:-5%;width:110%;z-index:0;pointer-events:none;opacity:.5;}
+  .wave svg{display:block;width:100%;height:auto;}
+  .w1{bottom:24vh;animation:bob 7s ease-in-out infinite;}
+  .w2{bottom:18vh;opacity:.35;animation:bob 9s ease-in-out infinite reverse;}
+  @keyframes bob{0%,100%{transform:translateX(0)}50%{transform:translateX(-3%)}}
+  body::after{content:"";position:fixed;inset:0;z-index:1;pointer-events:none;opacity:.05;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");}
+
+  .app{position:relative;z-index:2;width:100%;max-width:480px;padding:0 20px 48px;display:flex;flex-direction:column;align-items:center;}
+  header{text-align:center;padding-top:23vh;margin-bottom:16px;}
+  .kicker{font-family:'Jua',sans-serif;letter-spacing:.32em;font-size:13px;color:var(--ink);
+    background:var(--gold);display:inline-block;padding:4px 14px 3px;border-radius:20px;transform:rotate(-2deg);
+    box-shadow:0 6px 16px -6px rgba(0,0,0,.4);}
+  h1{font-family:'Black Han Sans',sans-serif;font-weight:400;margin:14px 0 2px;line-height:.96;font-size:clamp(46px,15vw,72px);
+    background:linear-gradient(180deg,#fff6ec,#ffd9b0);-webkit-background-clip:text;background-clip:text;color:transparent;
+    text-shadow:0 6px 30px rgba(0,0,0,.25);}
+  .sub{font-size:14px;color:var(--peach);opacity:.95;}
+
+  .card{background:var(--glass);color:var(--ink);border-radius:24px;padding:22px 20px;width:100%;
+    box-shadow:var(--shadow);backdrop-filter:blur(8px);border:1px solid rgba(255,255,255,.5);
+    animation:pop .5s cubic-bezier(.2,.8,.2,1);}
+  @keyframes pop{from{transform:translateY(16px) scale(.98);opacity:0}to{transform:none;opacity:1}}
+
+  /* tabs */
+  .tabs{display:flex;gap:6px;background:#f1ddc8;border-radius:16px;padding:5px;margin-bottom:18px;}
+  .tab{flex:1;font-family:'Jua';font-size:16px;border:none;background:transparent;color:#a06a44;
+    padding:11px 8px;border-radius:12px;cursor:pointer;transition:.18s;}
+  .tab.active{background:#fff;color:var(--coral);box-shadow:0 4px 12px -4px rgba(255,106,90,.5);}
+
+  .label{font-family:'Jua',sans-serif;font-size:15px;color:#8a5a3c;margin-bottom:10px;display:flex;align-items:center;gap:6px;}
+  .row{display:flex;gap:8px;}
+  input[type=text]{flex:1;font-family:'Gowun Dodum';font-size:17px;padding:13px 15px;border-radius:14px;
+    border:2px solid #f0d9bf;background:#fffdf9;color:var(--ink);outline:none;transition:border .15s;}
+  input[type=text]:focus{border-color:var(--coral);}
+  .btn{font-family:'Jua',sans-serif;border:none;cursor:pointer;border-radius:14px;font-size:17px;
+    padding:13px 18px;transition:transform .08s, box-shadow .15s, opacity .15s;}
+  .btn:active{transform:scale(.96);}
+  .btn-add{background:var(--sea);color:#fff;flex:0 0 auto;}
+  .btn-go{background:linear-gradient(135deg,var(--coral),var(--orange));color:#fff;width:100%;margin-top:16px;
+    font-size:20px;padding:16px;box-shadow:0 12px 26px -8px rgba(255,106,90,.7);}
+  .btn-go:disabled{opacity:.4;box-shadow:none;cursor:not-allowed;}
+  .btn-ghost{background:transparent;color:#a06a44;border:2px solid #e7cdb0;width:100%;margin-top:10px;font-size:16px;}
+  .btn-copy{background:var(--teal);color:#06303a;}
+
+  .names{list-style:none;margin:16px 0 4px;padding:0;display:flex;flex-direction:column;gap:8px;max-height:38vh;overflow-y:auto;}
+  .names li{display:flex;align-items:center;gap:10px;background:#fff;border-radius:13px;padding:11px 12px;border:1px solid #f1e0cd;animation:slide .25s ease;}
+  @keyframes slide{from{transform:translateX(-10px);opacity:0}to{transform:none;opacity:1}}
+  .names .num{font-family:'Black Han Sans';color:var(--coral);font-size:15px;min-width:22px;text-align:center;}
+  .names .nm{flex:1;font-size:17px;}
+  .names .del{background:none;border:none;color:#c9a98c;font-size:20px;cursor:pointer;padding:2px 6px;line-height:1;}
+  .count{text-align:center;font-size:13px;color:#a06a44;margin-top:6px;}
+
+  .sectitle{font-family:'Jua';font-size:15px;margin:0 0 6px;}
+  .linkbox{display:flex;gap:8px;}
+  .linkbox input{font-size:13px;color:#6a4a30;background:#fff7ee;}
+  .hint-sm{font-size:12.5px;color:#9a6e48;margin-top:8px;}
+  .note{font-size:12.5px;color:#9a6e48;line-height:1.5;background:#fff4e6;border-radius:12px;padding:10px 12px;margin-top:14px;border:1px dashed #e9c9a4;}
+  .warn{background:#ffe2dc;border-color:#ff9a8c;color:#a33b2a;}
+  .toggle{margin-top:16px;font-family:'Jua';font-size:15px;color:var(--sea);cursor:pointer;display:flex;align-items:center;gap:6px;user-select:none;}
+  .personal{margin-top:10px;display:flex;flex-direction:column;gap:8px;}
+  .pitem{display:flex;align-items:center;gap:8px;background:#fff;border:1px solid #f1e0cd;border-radius:12px;padding:8px 10px;}
+  .pitem .pn{flex:1;font-family:'Jua';font-size:15px;color:var(--ink);}
+  .pitem .btn{font-size:13px;padding:8px 12px;}
+
+  .pool{margin-top:10px;display:flex;flex-direction:column;gap:8px;max-height:40vh;overflow-y:auto;}
+  .pool .mi{background:#fff;border:1px solid #f1e0cd;border-radius:12px;padding:10px 12px;}
+  .pool .mi b{font-family:'Jua';color:var(--coral);font-size:14px;}
+  .pool .mi p{margin:4px 0 0;font-size:13px;color:#5e463a;line-height:1.45;}
+
+  /* picker grid */
+  .grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:6px;}
+  .tile{font-family:'Jua';font-size:17px;padding:18px 10px;border-radius:16px;cursor:pointer;
+    background:linear-gradient(135deg,#fff,#fff3e3);border:2px solid #ffd9b8;color:var(--ink);text-align:center;
+    transition:transform .1s;box-shadow:0 6px 14px -8px rgba(255,106,90,.5);}
+  .tile:active{transform:scale(.95);}
+
+  /* reveal */
+  .reveal-wrap{display:flex;flex-direction:column;align-items:center;text-align:center;}
+  .whoami{font-size:15px;color:#a06a44;margin-bottom:4px;}
+  .whoami b{font-family:'Jua';color:var(--coral);font-size:19px;}
+  .flip{perspective:1200px;width:100%;max-width:310px;height:370px;margin:14px auto 6px;cursor:pointer;}
+  .flip-inner{position:relative;width:100%;height:100%;transition:transform .7s cubic-bezier(.4,.2,.2,1);transform-style:preserve-3d;}
+  .flip.open .flip-inner{transform:rotateY(180deg);}
+  .face{position:absolute;inset:0;backface-visibility:hidden;-webkit-backface-visibility:hidden;border-radius:22px;
+    display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;padding:24px;overflow-y:auto;}
+  .front{background:linear-gradient(160deg,var(--sea),#0c2c3e);color:var(--peach);border:2px solid rgba(255,208,107,.4);}
+  .front .seal{font-size:54px;animation:pulse 1.8s ease-in-out infinite;}
+  @keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.12)}}
+  .front .hint{font-family:'Jua';font-size:18px;}
+  .front small{font-size:13px;opacity:.7;}
+  .back{background:linear-gradient(160deg,#fff,#ffe9d2);color:var(--ink);transform:rotateY(180deg);border:2px solid var(--gold);}
+  .back .lead{font-size:15px;color:#a06a44;}
+  .back .mname{font-family:'Black Han Sans';font-size:clamp(34px,11vw,52px);line-height:1.05;
+    background:linear-gradient(135deg,var(--coral),var(--orange));-webkit-background-clip:text;background-clip:text;color:transparent;}
+  .back .mname.mission{font-size:clamp(26px,8.5vw,38px);}
+  .back .mdesc{font-size:15px;color:#5e463a;line-height:1.55;max-width:260px;}
+  .back .heart{font-size:28px;}
+  .secret{font-size:13px;color:#b08a6a;margin-top:6px;}
+  .sparkle{position:absolute;pointer-events:none;font-size:20px;animation:spk .9s ease-out forwards;}
+  @keyframes spk{0%{transform:scale(.2) translateY(0);opacity:1}100%{transform:scale(1.3) translateY(-40px);opacity:0}}
+
+  .toast{position:fixed;left:50%;bottom:30px;transform:translateX(-50%) translateY(20px);background:var(--sea);color:#fff;
+    padding:11px 20px;border-radius:30px;font-family:'Jua';font-size:15px;opacity:0;transition:.25s;z-index:50;pointer-events:none;max-width:90%;text-align:center;}
+  .toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+  .footer{margin-top:22px;text-align:center;font-size:12px;color:rgba(255,227,196,.7);}
+  .hidden{display:none!important;}
+</style>
+</head>
+<body>
+  <div class="sun"></div>
+  <div class="wave w1"><svg viewBox="0 0 1440 120" preserveAspectRatio="none"><path fill="%232bc6c0" d="M0,40 C240,90 480,0 720,40 C960,80 1200,10 1440,50 L1440,120 L0,120 Z"/></svg></div>
+  <div class="wave w2"><svg viewBox="0 0 1440 120" preserveAspectRatio="none"><path fill="%23ffffff" d="M0,60 C240,20 480,100 720,60 C960,20 1200,90 1440,50 L1440,120 L0,120 Z"/></svg></div>
+  <div class="sea"></div>
+
+  <div class="app">
+    <header>
+      <span class="kicker">강릉 RUN TRIP</span>
+      <h1>마니또</h1>
+      <p class="sub">🌅 동해 일출과 함께하는 비밀 친구 뽑기</p>
+    </header>
+
+    <!-- HOME (organizer) -->
+    <section id="home" class="card hidden">
+      <div class="tabs">
+        <button class="tab active" data-tab="manito">🎁 마니또</button>
+        <button class="tab" data-tab="mission">🎯 미션</button>
+      </div>
+
+      <!-- MANITO PANEL -->
+      <div id="manitoPanel">
+        <div class="label">✅ 마니또 뽑기 완료! 링크를 공유하세요</div>
+        <div id="hostWarn" class="note warn hidden">
+          ⚠️ <b>지금 만든 링크는 친구가 못 열어요.</b> 이 페이지가 공개 주소에 올라가 있지 않아서예요.<br>
+          파일을 무료로 올린 뒤(<b>app.netlify.com/drop</b>에 드래그), <u>그 주소에서</u> 다시 링크를 만들어 주세요.
+        </div>
+        <p class="sectitle" style="color:var(--coral)">📢 공용 링크 (단톡방에 뿌리기)</p>
+        <div class="linkbox">
+          <input type="text" id="sharedLink" readonly>
+          <button class="btn btn-copy" id="copyShared">복사</button>
+        </div>
+        <p class="hint-sm">→ 받은 사람이 각자 본인 폰에서 링크 열고, 자기 이름 눌러 마니또 확인</p>
+        <div class="toggle" id="togglePersonal">🔒 개인별 링크 보기 (완전 비밀 보장) ▾</div>
+        <div class="personal hidden" id="personalList"></div>
+        <div class="note">💡 <b>공용 링크</b>는 편하지만, 작정하고 뜯어보면 결과 전체가 보일 수 있어요.<br>들키기 싫으면 <b>개인별 링크</b>를 각자에게 1:1로 보내주세요.</div>
+        <button class="btn btn-go" id="redrawBtn" style="margin-top:14px;font-size:18px;">🎲 다시 뽑기</button>
+        <button class="btn btn-ghost" id="remakeBtn">✏️ 명단 수정</button>
+      </div>
+
+      <!-- MISSION PANEL -->
+      <div id="missionPanel" class="hidden">
+        <div class="label">🎯 미션 배정 완료! 링크를 공유하세요</div>
+        <div id="missionWarn" class="note warn hidden">
+          ⚠️ <b>지금 만든 링크는 친구가 못 열어요.</b> 파일을 <b>app.netlify.com/drop</b>에 올린 뒤, 그 주소에서 다시 만들어 주세요.
+        </div>
+        <p class="sectitle" style="color:var(--coral)">📢 공용 링크 (단톡방에 뿌리기)</p>
+        <div class="linkbox">
+          <input type="text" id="missionSharedLink" readonly>
+          <button class="btn btn-copy" id="copyMissionShared">복사</button>
+        </div>
+        <p class="hint-sm">→ 각자 링크 열고 본인 이름 눌러 미션 확인</p>
+        <div class="toggle" id="toggleMissionPersonal">🔒 개인별 미션 링크 보기 ▾</div>
+        <div class="personal hidden" id="missionPersonalList"></div>
+        <div class="toggle" id="togglePool">📜 전체 미션 목록 보기 ▾</div>
+        <div class="pool hidden" id="poolList"></div>
+        <button class="btn btn-go" id="missionRedrawBtn" style="margin-top:14px;font-size:18px;">🎲 미션 다시 뽑기</button>
+      </div>
+    </section>
+
+    <!-- SETUP -->
+    <section id="setup" class="card hidden">
+      <div class="label">🏃 참가자 명단을 입력하세요</div>
+      <div class="row">
+        <input type="text" id="nameInput" placeholder="이름 입력 후 추가" autocomplete="off" maxlength="12">
+        <button class="btn btn-add" id="addBtn">추가</button>
+      </div>
+      <ul class="names" id="nameList"></ul>
+      <p class="count" id="countMsg">최소 2명 이상 추가해 주세요</p>
+      <button class="btn btn-go" id="makeBtn" disabled>마니또 + 미션 다시 뽑기 🔥</button>
+    </section>
+
+    <!-- PICKER (participant) -->
+    <section id="picker" class="card hidden">
+      <div class="label" id="pickerLabel" style="justify-content:center">👇 본인 이름을 눌러 확인하세요</div>
+      <div class="grid" id="grid"></div>
+      <p class="count">⚠️ 꼭 본인 이름만! 다른 사람 건 누르지 마세요</p>
+    </section>
+
+    <!-- REVEAL -->
+    <section id="reveal" class="card hidden">
+      <div class="reveal-wrap">
+        <p class="whoami"><b id="revealWho"></b> <span id="revealWhoSuffix">님의 마니또는...</span></p>
+        <div class="flip" id="flip">
+          <div class="flip-inner">
+            <div class="face front">
+              <div class="seal" id="frontSeal">💌</div>
+              <div class="hint" id="frontHint">탭해서 확인</div>
+              <small>다른 사람이 못 보게 가려주세요!</small>
+            </div>
+            <div class="face back">
+              <span class="lead" id="revealLead">내 마니또는</span>
+              <span class="mname" id="revealName"></span>
+              <span class="mdesc hidden" id="revealDesc"></span>
+              <span class="heart" id="revealHeart">💝</span>
+            </div>
+          </div>
+        </div>
+        <p class="secret" id="revealSecret">🤫 마니또에게 들키지 않게 몰래 챙겨주기!</p>
+        <button class="btn btn-ghost hidden" id="backToPicker">← 목록으로</button>
+      </div>
+    </section>
+
+    <p class="footer">made for 강릉 런트립 · 각자 본인 폰에서 열어 확인하세요</p>
+  </div>
+  <div class="toast" id="toast">복사됐어요!</div>
+
+<script>
+const $ = id => document.getElementById(id);
+const NAMES_KEY='gangneung_manito_names_v1';
+const MANITO_KEY='gangneung_manito_map_v1';
+const MISSION_KEY='gangneung_mission_map_v1';
+
+/* ===== 사전 세팅 ===== */
+const PRESET_NAMES = ["윤기삼","정준혁","이현성","장혜원","정수민","이은지","김소현","최윤정","김주윤","홍세리","홍시연","박수인"];
+const PRESET_MANITO = {"이현성":"윤기삼","윤기삼":"이은지","이은지":"장혜원","장혜원":"정준혁","정준혁":"김소현","김소현":"정수민","정수민":"김주윤","김주윤":"최윤정","최윤정":"박수인","박수인":"홍시연","홍시연":"홍세리","홍세리":"이현성"};
+const FORCED = { "이현성":"윤기삼" }; // 누른 사람 → 그 사람의 마니또 (다시 뽑아도 유지)
+
+const MISSIONS = [
+  {t:'"나 어때?"', d:'마니또에게 내 전신사진이나 독사진을 찍어달라고 요청하기'},
+  {t:'"이거 들을래?"', d:'이어폰 한쪽을 마니또 귀에 꽂아주며 내가 좋아하는 노래 들려주기'},
+  {t:'"아, 목말라"', d:'마니또가 나에게 물이나 음료수를 한 입(또는 한 모금) 먼저 양보하게 만들기'},
+  {t:'"여기 봐봐"', d:'마니또가 카메라를 보며 자연스럽게 브이(V)나 포즈를 취하게 만들기'},
+  {t:'"너 뭐 마실래?"', d:'휴게소나 카페에서 마니또의 최애 음료나 간식을 정확히 맞춘 뒤 슬쩍 사주기'},
+  {t:'"나 이거 어울려?"', d:'소품샵이나 기념품점에서 마니또가 추천해 주는 모자나 선글라스 써보기'},
+  {t:'비밀의 파파라치', d:'마니또가 여행지 풍경을 멍하니 바라보는 감성 뒷모습 사진 찍어두기'},
+  {t:'단짝 타이틀', d:'마니또와 단둘이 어깨동무를 하거나 팔짱을 끼고 찍은 사진 확보하기'},
+  {t:'도플갱어', d:'여행 중 마니또가 짓는 가장 웃긴 표정이나 엽기적인 순간 포착해서 찍기'},
+  {t:'하트 시그널', d:'마니또가 앞서 걸어갈 때, 몰래 등 뒤로 손하트를 날리는 사진 찍기 (다른 친구에게 촬영 부탁)'},
+  {t:'시선 강탈', d:'단체 사진을 찍을 때 마니또의 바로 옆자리나 뒷자리를 무조건 사수하기'},
+  {t:'발자국 남기기', d:'마니또의 신발과 내 신발이 나란히 나오게 감성 샷 한 장 남기기'},
+  {t:'우렁각시 수저', d:'식당에 앉자마자 마니또의 수저와 물컵을 가장 먼저 세팅해 주기'},
+  {t:'최애 픽', d:'마니또가 좋아하는 반찬이나 고기 부위를 슬쩍 그 사람 앞접시에 올려주기'},
+  {t:'"맛있어?"', d:'마니또가 한 입 먹었을 때 "진짜 맛있어?"라는 대답을 3번 이상 받아내기'},
+  {t:'깔끔 요정', d:'마니또가 음식을 먹다 흘렸을 때, 말없이 휴지나 물티슈 뽑아서 건네기'},
+  {t:'디저트 저격', d:'마니또가 배부르다고 할 때, 그 사람이 평소 좋아하는 디저트 한 입 먹이기'},
+  {t:'"한 입만!"', d:'마니또가 주문한 메뉴를 "나 한 입만 줘" 해서 뺏어 먹기 (세상에서 가장 맛있게 먹어야 함)'},
+  {t:'"이거 발라"', d:'씻고 나온 마니또에게 스킨케어나 바디로션, 혹은 핸드크림 짜주기'},
+  {t:'꿀잠 지킴이', d:'불을 끌 때 마니또에게 "잘 자라" 혹은 "좋은 꿈 꿔라"라고 다정하게 한마디 건네기'},
+  {t:'"일어나!"', d:'다음 날 아침, 마니또가 기상 시간 안에 일어날 수 있도록 깨워주기 (꿀밤이나 물뿌리기 금지!)'}
+];
+
+/* ===== 저장/복원 ===== */
+function lsGet(k){ try{ const r=localStorage.getItem(k); return r?JSON.parse(r):null; }catch(e){ return null; } }
+function lsSet(k,v){ try{ localStorage.setItem(k, JSON.stringify(v)); }catch(e){} }
+
+/* ===== 인코딩 (한글 OK + 가벼운 뒤섞기) ===== */
+function enc(obj){
+  const bytes=new TextEncoder().encode(JSON.stringify(obj));
+  let bin=''; bytes.forEach(b=>bin+=String.fromCharCode(b));
+  return btoa(bin).split('').reverse().join('');
+}
+function dec(s){
+  const b64=s.split('').reverse().join('');
+  const bin=atob(b64); const bytes=Uint8Array.from(bin,c=>c.charCodeAt(0));
+  return JSON.parse(new TextDecoder().decode(bytes));
+}
+function baseUrl(){ return location.origin + location.pathname; }
+function isShareable(){
+  const p=location.protocol;
+  if(p==='blob:'||p==='file:'||p==='data:'||p==='about:') return false;
+  if(!location.hostname || location.hostname==='null') return false;
+  try{ if(window.self!==window.top) return false; }catch(e){ return false; }
+  return true;
+}
+
+/* ===== 배정 로직 ===== */
+function shuffle(a){ for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];} return a; }
+function makeManito(names){
+  const forced=Object.entries(FORCED).filter(([g,r])=>names.includes(g)&&names.includes(r));
+  let order;
+  if(forced.length){ const [g,r]=forced[0]; const rest=shuffle(names.filter(n=>n!==g&&n!==r)); order=[g,r,...rest]; }
+  else order=shuffle([...names]);
+  const m={}; for(let i=0;i<order.length;i++) m[order[i]]=order[(i+1)%order.length];
+  return m;
+}
+function makeMissions(names){
+  const pool=shuffle(MISSIONS.map(m=>({t:m.t,d:m.d})));
+  const m={}; names.forEach((n,i)=>{ m[n]=pool[i%pool.length]; });
+  return m;
+}
+
+function showScreen(n){ ['home','setup','picker','reveal'].forEach(s=>$(s).classList.toggle('hidden', s!==n)); }
+function toast(msg){ const t=$('toast'); t.textContent=msg; t.classList.add('show'); clearTimeout(t._t); t._t=setTimeout(()=>t.classList.remove('show'),1700); }
+async function copy(text){
+  try{ await navigator.clipboard.writeText(text); toast('복사됐어요! 📋'); return; }catch(e){}
+  const ta=document.createElement('textarea'); ta.value=text; ta.style.position='fixed'; ta.style.opacity='0';
+  document.body.appendChild(ta); ta.select();
+  try{ document.execCommand('copy'); toast('복사됐어요! 📋'); }catch(e){ toast('복사 실패 — 길게 눌러 복사하세요'); }
+  ta.remove();
+}
+
+/* ===== 상태 ===== */
+let participants=[];
+let manitoMap={};
+let missionMap={};
+
+/* ===== 명단 ===== */
+function loadNames(){ const r=lsGet(NAMES_KEY); if(Array.isArray(r)) participants=r; }
+function saveNames(){ lsSet(NAMES_KEY, participants); }
+function renderNames(){
+  const ul=$('nameList'); ul.innerHTML='';
+  participants.forEach((n,i)=>{
+    const li=document.createElement('li');
+    li.innerHTML=`<span class="num">${i+1}</span><span class="nm"></span><button class="del" data-i="${i}" aria-label="삭제">×</button>`;
+    li.querySelector('.nm').textContent=n; ul.appendChild(li);
+  });
+  const c=participants.length;
+  $('countMsg').textContent = c<2 ? `최소 2명 이상 추가해 주세요 (현재 ${c}명)` : `현재 ${c}명 참가 🏃`;
+  $('makeBtn').disabled = c<2;
+}
+function addName(){
+  const inp=$('nameInput'); const v=inp.value.trim(); if(!v) return;
+  if(participants.includes(v)){ inp.value=''; inp.placeholder='이미 있는 이름이에요!'; inp.style.borderColor='#ff6a5a';
+    setTimeout(()=>{inp.placeholder='이름 입력 후 추가';inp.style.borderColor='';},1200); return; }
+  participants.push(v); inp.value=''; inp.focus(); renderNames(); saveNames();
+}
+$('addBtn').onclick=addName;
+$('nameInput').addEventListener('keydown',e=>{ if(e.key==='Enter') addName(); });
+$('nameList').addEventListener('click',e=>{ if(e.target.classList.contains('del')){ participants.splice(+e.target.dataset.i,1); renderNames(); saveNames(); }});
+
+/* ===== 링크 생성 ===== */
+function renderManito(){
+  const names = participants.length ? participants : Object.keys(manitoMap);
+  $('sharedLink').value = baseUrl()+'#m='+encodeURIComponent(enc({names, map:manitoMap}));
+  const pl=$('personalList'); pl.innerHTML='';
+  names.forEach(n=>{
+    const link=baseUrl()+'#p='+encodeURIComponent(enc({n, t:manitoMap[n]}));
+    const row=document.createElement('div'); row.className='pitem';
+    row.innerHTML=`<span class="pn"></span><button class="btn btn-copy">복사</button>`;
+    row.querySelector('.pn').textContent=n;
+    row.querySelector('button').onclick=()=>copy(link);
+    pl.appendChild(row);
+  });
+  $('hostWarn').classList.toggle('hidden', isShareable());
+}
+function renderMission(){
+  const names = participants.length ? participants : Object.keys(missionMap);
+  $('missionSharedLink').value = baseUrl()+'#mm='+encodeURIComponent(enc({names, miss:missionMap}));
+  const pl=$('missionPersonalList'); pl.innerHTML='';
+  names.forEach(n=>{
+    const mm=missionMap[n];
+    const link=baseUrl()+'#mp='+encodeURIComponent(enc({n, t:mm.t, d:mm.d}));
+    const row=document.createElement('div'); row.className='pitem';
+    row.innerHTML=`<span class="pn"></span><button class="btn btn-copy">복사</button>`;
+    row.querySelector('.pn').textContent=n;
+    row.querySelector('button').onclick=()=>copy(link);
+    pl.appendChild(row);
+  });
+  $('missionWarn').classList.toggle('hidden', isShareable());
+}
+function renderPool(){
+  const pl=$('poolList'); pl.innerHTML='';
+  MISSIONS.forEach(m=>{
+    const d=document.createElement('div'); d.className='mi';
+    const b=document.createElement('b'); b.textContent=m.t;
+    const p=document.createElement('p'); p.textContent=m.d;
+    d.appendChild(b); d.appendChild(p); pl.appendChild(d);
+  });
+}
+
+/* ===== 탭 ===== */
+function showTab(tab){
+  document.querySelectorAll('.tab').forEach(t=>t.classList.toggle('active', t.dataset.tab===tab));
+  $('manitoPanel').classList.toggle('hidden', tab!=='manito');
+  $('missionPanel').classList.toggle('hidden', tab!=='mission');
+}
+document.querySelectorAll('.tab').forEach(t=>{ t.onclick=()=>showTab(t.dataset.tab); });
+
+/* ===== 버튼 ===== */
+$('copyShared').onclick=()=>copy($('sharedLink').value);
+$('copyMissionShared').onclick=()=>copy($('missionSharedLink').value);
+$('togglePersonal').onclick=()=>$('personalList').classList.toggle('hidden');
+$('toggleMissionPersonal').onclick=()=>$('missionPersonalList').classList.toggle('hidden');
+$('togglePool').onclick=()=>$('poolList').classList.toggle('hidden');
+$('remakeBtn').onclick=()=>{ showScreen('setup'); };
+
+$('redrawBtn').onclick=()=>{
+  if(participants.length<2) return;
+  manitoMap=makeManito(participants); lsSet(MANITO_KEY, manitoMap); renderManito();
+  toast('마니또 새로 뽑았어요! 🎲 링크 다시 공유하세요');
+};
+$('missionRedrawBtn').onclick=()=>{
+  if(participants.length<1) return;
+  missionMap=makeMissions(participants); lsSet(MISSION_KEY, missionMap); renderMission();
+  toast('미션 새로 뽑았어요! 🎲 링크 다시 공유하세요');
+};
+$('makeBtn').onclick=()=>{
+  if(participants.length<2) return;
+  manitoMap=makeManito(participants); lsSet(MANITO_KEY, manitoMap); renderManito();
+  missionMap=makeMissions(participants); lsSet(MISSION_KEY, missionMap); renderMission();
+  showTab('manito'); showScreen('home');
+};
+
+/* ===== 참가자 화면 (picker / reveal) ===== */
+let picker=null; // {kind, names, lookup}
+function renderPicker(){
+  $('pickerLabel').textContent = picker.kind==='mission' ? '👇 본인 이름을 눌러 미션을 확인하세요' : '👇 본인 이름을 눌러 마니또를 확인하세요';
+  const grid=$('grid'); grid.innerHTML='';
+  picker.names.forEach(n=>{
+    const t=document.createElement('div'); t.className='tile'; t.textContent=n;
+    t.onclick=()=>doReveal(n, picker.lookup[n], true, picker.kind);
+    grid.appendChild(t);
+  });
+}
+function burst(host){
+  const em=['✨','🌟','💫','⭐'];
+  for(let i=0;i<8;i++){ const s=document.createElement('span'); s.className='sparkle'; s.textContent=em[i%4];
+    s.style.left=(15+Math.random()*70)+'%'; s.style.top=(25+Math.random()*50)+'%'; s.style.animationDelay=(Math.random()*.25)+'s';
+    host.appendChild(s); setTimeout(()=>s.remove(),1200); }
+}
+function doReveal(who, content, fromPicker, kind){
+  kind=kind||'manito';
+  $('revealWho').textContent=who;
+  const nameEl=$('revealName'), descEl=$('revealDesc');
+  if(kind==='mission'){
+    $('revealWhoSuffix').textContent='님의 미션은...';
+    $('frontSeal').textContent='🎯'; $('frontHint').textContent='탭해서 미션 확인';
+    $('revealLead').textContent='나의 미션'; $('revealHeart').textContent='🔥';
+    $('revealSecret').textContent='🤫 마니또 몰래 미션 완수하기!';
+    nameEl.textContent=content.t; nameEl.classList.add('mission');
+    descEl.textContent=content.d; descEl.classList.remove('hidden');
+  } else {
+    $('revealWhoSuffix').textContent='님의 마니또는...';
+    $('frontSeal').textContent='💌'; $('frontHint').textContent='탭해서 확인';
+    $('revealLead').textContent='내 마니또는'; $('revealHeart').textContent='💝';
+    $('revealSecret').textContent='🤫 마니또에게 들키지 않게 몰래 챙겨주기!';
+    nameEl.textContent=content; nameEl.classList.remove('mission');
+    descEl.textContent=''; descEl.classList.add('hidden');
+  }
+  $('backToPicker').classList.toggle('hidden', !fromPicker);
+  const flip=$('flip'); flip.classList.remove('open');
+  showScreen('reveal');
+  flip.onclick=()=>{ if(flip.classList.contains('open')) return; flip.classList.add('open'); burst(flip); };
+}
+$('backToPicker').onclick=()=>showScreen('picker');
+
+/* ===== 라우터 ===== */
+(function init(){
+  const h=location.hash||'';
+  try{
+    if(h.startsWith('#mm=')){ const d=dec(decodeURIComponent(h.slice(4))); picker={kind:'mission',names:d.names,lookup:d.miss}; renderPicker(); showScreen('picker'); return; }
+    if(h.startsWith('#mp=')){ const d=dec(decodeURIComponent(h.slice(4))); doReveal(d.n, {t:d.t,d:d.d}, false, 'mission'); return; }
+    if(h.startsWith('#m=')){ const d=dec(decodeURIComponent(h.slice(3))); picker={kind:'manito',names:d.names,lookup:d.map}; renderPicker(); showScreen('picker'); return; }
+    if(h.startsWith('#p=')){ const d=dec(decodeURIComponent(h.slice(3))); doReveal(d.n, d.t, false, 'manito'); return; }
+  }catch(e){ /* 잘못된 링크 → 홈으로 */ }
+
+  // 주최자 홈
+  loadNames();
+  if(!participants.length) participants = PRESET_NAMES.slice();
+  renderNames();
+  const namesKey=[...participants].sort().join('|');
+
+  // 마니또 맵 복원/생성
+  let mm=lsGet(MANITO_KEY);
+  if(!mm || Object.keys(mm).sort().join('|')!==namesKey){
+    mm = (participants.join('|')===PRESET_NAMES.join('|')) ? PRESET_MANITO : makeManito(participants);
+    lsSet(MANITO_KEY, mm);
+  }
+  manitoMap=mm;
+
+  // 미션 맵 복원/생성
+  let xm=lsGet(MISSION_KEY);
+  if(!xm || Object.keys(xm).sort().join('|')!==namesKey){
+    xm = makeMissions(participants);
+    lsSet(MISSION_KEY, xm);
+  }
+  missionMap=xm;
+
+  renderManito(); renderMission(); renderPool();
+  showTab('manito'); showScreen('home');
+})();
+</script>
+</body>
+</html>
