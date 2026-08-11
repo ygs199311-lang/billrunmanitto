@@ -244,13 +244,11 @@
 <script>
 const $ = id => document.getElementById(id);
 const NAMES_KEY='gangneung_manito_names_v1';
-const MANITO_KEY='gangneung_manito_map_v1';
+const MANITO_KEY='gangneung_manito_map_v2';
 const MISSION_KEY='gangneung_mission_map_v1';
 
 /* ===== 사전 세팅 ===== */
 const PRESET_NAMES = ["윤기삼","정준혁","이현성","장혜원","정수민","이은지","김소현","최윤정","김주윤","홍세리","홍시연","박수인"];
-const PRESET_MANITO = {"이현성":"윤기삼","윤기삼":"이은지","이은지":"장혜원","장혜원":"정준혁","정준혁":"김소현","김소현":"정수민","정수민":"김주윤","김주윤":"최윤정","최윤정":"박수인","박수인":"홍시연","홍시연":"홍세리","홍세리":"이현성"};
-const FORCED = { "이현성":"윤기삼" }; // 누른 사람 → 그 사람의 마니또 (다시 뽑아도 유지)
 
 const MISSIONS = [
   {t:'"나 어때?"', d:'마니또에게 내 전신사진이나 독사진을 찍어달라고 요청하기'},
@@ -303,12 +301,9 @@ function isShareable(){
 /* ===== 배정 로직 ===== */
 function shuffle(a){ for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];} return a; }
 function makeManito(names){
-  const forced=Object.entries(FORCED).filter(([g,r])=>names.includes(g)&&names.includes(r));
-  let order;
-  if(forced.length){ const [g,r]=forced[0]; const rest=shuffle(names.filter(n=>n!==g&&n!==r)); order=[g,r,...rest]; }
-  else order=shuffle([...names]);
+  const order=shuffle([...names]);
   const m={}; for(let i=0;i<order.length;i++) m[order[i]]=order[(i+1)%order.length];
-  return m;
+  return m; // 랜덤 사이클 → 본인 제외 + 서로 마니또 X
 }
 function makeMissions(names){
   const pool=shuffle(MISSIONS.map(m=>({t:m.t,d:m.d})));
@@ -490,7 +485,7 @@ $('backToPicker').onclick=()=>showScreen('picker');
   // 마니또 맵 복원/생성
   let mm=lsGet(MANITO_KEY);
   if(!mm || Object.keys(mm).sort().join('|')!==namesKey){
-    mm = (participants.join('|')===PRESET_NAMES.join('|')) ? PRESET_MANITO : makeManito(participants);
+    mm = makeManito(participants);
     lsSet(MANITO_KEY, mm);
   }
   manitoMap=mm;
